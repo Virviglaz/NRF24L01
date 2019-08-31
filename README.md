@@ -66,11 +66,6 @@ void init (void)
 	radio.config.rx_irq = true;
 	radio.config.tx_irq = true;
 	radio.enabled_rx_addresses.pipe0 = true;
-	radio.enabled_rx_addresses.pipe1 = true;
-	radio.enabled_rx_addresses.pipe2 = true;
-	radio.enabled_rx_addresses.pipe3 = true;
-	radio.enabled_rx_addresses.pipe4 = true;
-	radio.enabled_rx_addresses.pipe5 = true;
 	radio.address_widths.address_len = ADDRESS_5_BYTES;
 	radio.channel = 72;
 	radio.setup.data_rate = R_2MPS;
@@ -80,11 +75,6 @@ void init (void)
 	radio.rx_address_p0 = (uint8_t *)"HALLO";
 	radio.tx_address = radio.rx_address_p0;
 	radio.rx_pipe_size[0] = 32;
-	radio.rx_pipe_size[1] = 32;
-	radio.rx_pipe_size[2] = 32;
-	radio.rx_pipe_size[3] = 32;
-	radio.rx_pipe_size[4] = 32;
-	radio.rx_pipe_size[5] = 32;
 	radio.read_cnt = 100000; //this value limits the waiting for IRQ time in case of chip failure
 	
   /* Init radio */
@@ -98,7 +88,8 @@ void init (void)
 ```C
 /* Send 32 bytes of data */
 bool tx_res; // will become 'true' if send successfull
-tx_res = radio.send(tx_address, rxbuf, 32); //tx_address can be NULL to use address provided before
+tx_res = radio.send(tx_address, rxbuf, 32); //tx_address can be NULL to use address provided before:
+tx_res = radio.send(NULL, rxbuf, 32); //send to radio.tx_address
 ```
 ```C
 uint8_t pipe_n; // can be NULL. Pipe num will be returned
@@ -107,7 +98,7 @@ radio.recv(rx_buf, &pipe_n); // will return true if we have a data received
 ## Testing
 Tested with OrangePi PC2, STM32F103 and STM8
 Achived performance: STM32F103 TX -> RX OrangePi PC2:
-  32 bytes x 825 packets per second = 26400 bytes/sec (25.8 kB/s) with non-ack mode
+  32 bytes x 952 packets per second = 30464 bytes/sec (29.8 kB/s) with non-ack mode
 
 ## Authors
 
