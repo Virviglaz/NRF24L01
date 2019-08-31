@@ -55,7 +55,18 @@ void init (void)
 	/* interface */
 	radio.interface.write = spi_write;
 	radio.interface.read = spi_read;
+	
+	/* If the chip is used in always 	*
+	 * enabled mode this function can be 	*
+	 * replaced by dummy one and CE pin can	*
+	 * be just connected to VDD.		*/
 	radio.interface.radio_en = radio_en;
+
+	/* Read irq function in an optional 	*
+	 * If NULL is provided, no GPIO pin 	*
+	 * will be used, status bits will be 	*
+	 * taken from register. Reduce pin	*
+	 * usage if possible.			*/
 	radio.interface.read_irq = read_irq;
 	
 	/* config */
@@ -70,6 +81,9 @@ void init (void)
 	radio.channel = 72;
 	radio.setup.data_rate = R_2MPS;
 	radio.setup.power = P_0dBm;
+	/* We don't need to enable IRQ by	*
+	 * ourself. Driver will enable 		*
+	 * automatically.			*/
 	
 	/* pipes */
 	radio.rx_address_p0 = (uint8_t *)"HALLO";
