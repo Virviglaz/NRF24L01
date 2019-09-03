@@ -52,6 +52,10 @@
 #define SPI_MODE				SPI_MODE_0
 #define SPI_BITS_PER_WORD		8u
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 enum radio_mode { RADIO_TX, RADIO_RX };
 
 struct nrf24l01_conf
@@ -161,5 +165,9 @@ struct nrf24l01_conf
 
 uint8_t nrf24l01_init (struct nrf24l01_conf *driver);
 void spi_deinit(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* NRF24L01_H */
