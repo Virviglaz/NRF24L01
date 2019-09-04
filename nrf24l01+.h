@@ -150,7 +150,7 @@ struct nrf24l01_conf
 	uint8_t rx_pipe_size[6];
 
 	/* Decrement this variable outside by timer to limit execution time */
-	uint8_t *timeout_ms;
+	volatile uint8_t *timeout_ms;
 
 	/* Keep rx enabled after tx if needed */
 	bool rx_state;
