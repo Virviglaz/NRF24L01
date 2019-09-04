@@ -86,6 +86,7 @@
 #define MIN(a,b) (((a)<(b))?(a):(b))
 
 static struct nrf24l01_conf *local_driver;
+static uint8_t timeout_counter;
 
 static void write_reg(uint8_t reg, uint8_t value)
 {
@@ -251,12 +252,16 @@ static void wakeup(void)
   */
 uint8_t nrf24l01_init(struct nrf24l01_conf *driver)
 {
+	/* Public functions */
 	local_driver = driver;
 	local_driver->send = send;
 	local_driver->recv = recv;
 	local_driver->mode = switch_mode;
 	local_driver->sleep = sleep;
 	local_driver->wakeup = wakeup;
+	
+	/* Timeout variable access */
+	local_driver->timeout_ms = &timeout_counter;
 
 	disable_radio();
 	write_reg(EN_AA_REG, *(uint8_t *)&local_driver->auto_acknowledgment);
