@@ -84,7 +84,7 @@ struct nrf24l01_conf
 		bool rx_irq : 1;
 	} config;
 
-	/* Enhanced ShockBurst™ Auto Acknowledgment */
+	/* Enhanced ShockBurstâ„¢ Auto Acknowledgment */
 	struct
 	{
 		bool pipe0 : 1;
@@ -149,8 +149,8 @@ struct nrf24l01_conf
 	/* Size of buffer for each rx pipe */
 	uint8_t rx_pipe_size[6];
 
-	/* How many times we gonna pool IRQ before report fault */
-	uint32_t read_cnt;
+	/* Decrement this variable outside by timer to limit execution time */
+	uint8_t *timeout_ms;
 
 	/* Keep rx enabled after tx if needed */
 	bool rx_state;
