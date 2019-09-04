@@ -83,8 +83,6 @@
 #define MAX_PIPE_SIZE			32
 #define MAX_TX_TIMEOUT_MS		100
 
-#define MIN(a,b) (((a)<(b))?(a):(b))
-
 static struct nrf24l01_conf *local_driver;
 static uint8_t timeout_counter;
 
