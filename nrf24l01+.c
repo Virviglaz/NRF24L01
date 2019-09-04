@@ -81,10 +81,10 @@
 #define INVERT_IRQ_BITS				0x70
 
 #define MAX_PIPE_SIZE			32
-
-#define MIN(a,b) (((a)<(b))?(a):(b))
+#define MAX_TX_TIMEOUT_MS		100
 
 static struct nrf24l01_conf *local_driver;
+static uint8_t timeout_counter;
 
 static void write_reg(uint8_t reg, uint8_t value)
 {
@@ -138,10 +138,10 @@ static void disable_radio (void)
 
 static bool send(uint8_t *dest, uint8_t *data, uint8_t size)
 {
-	uint32_t cnt = local_driver->read_cnt;
 	bool res, in_rx = local_driver->config.mode == RADIO_RX;
 	uint8_t tx_irq = local_driver->auto_retransmit.count ?
 		MAX_RT_IRQ_MASK | TX_DS_IRQ_MASK : TX_DS_IRQ_MASK;
+	*local_driver->timeout_ms = MAX_TX_TIMEOUT_MS;
 
 	if (dest) /* Change distanation if needed */
 		write_address(TX_ADDR_REG, dest);
@@ -152,14 +152,14 @@ static bool send(uint8_t *dest, uint8_t *data, uint8_t size)
 
 	local_driver->interface.write(SEND_PAYLOAD_CMD, data, size);
 	
-	while (!read_irq(tx_irq) && --cnt);
+	while (!read_irq(tx_irq) && *local_driver->timeout_ms);
 
 	if (local_driver->auto_retransmit.count)
 		/* Check maximum retransmit is set, return false */
 		res = !(read_reg(STATUS_REG) & MAX_RT_IRQ_MASK);
 	else
 		/* Just check that chip is responding */
-		res = !(cnt == 0);
+		res = !(*local_driver->timeout_ms == 0);
 
 	clear_irq(tx_irq);
 	flush_buffer(FLUSH_TX_CMD);
@@ -250,12 +250,16 @@ static void wakeup(void)
   */
 uint8_t nrf24l01_init(struct nrf24l01_conf *driver)
 {
+	/* Public functions */
 	local_driver = driver;
 	local_driver->send = send;
 	local_driver->recv = recv;
 	local_driver->mode = switch_mode;
 	local_driver->sleep = sleep;
 	local_driver->wakeup = wakeup;
+	
+	/* Timeout variable access */
+	local_driver->timeout_ms = &timeout_counter;
 
 	disable_radio();
 	write_reg(EN_AA_REG, *(uint8_t *)&local_driver->auto_acknowledgment);
