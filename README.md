@@ -81,15 +81,11 @@ void init (void)
 	radio.channel = 72;
 	radio.setup.data_rate = R_2MPS;
 	radio.setup.power = P_0dBm;
-	/* We don't need to enable IRQ by	*
-	 * ourself. Driver will enable 		*
-	 * automatically.			*/
 	
 	/* pipes */
 	radio.rx_address_p0 = (uint8_t *)"HALLO";
 	radio.tx_address = radio.rx_address_p0;
 	radio.rx_pipe_size[0] = 32;
-	radio.read_cnt = 100000; //this value limits the waiting for IRQ time in case of chip failure
 	
   /* Init radio */
 	nrf24l01_init(&radio);
