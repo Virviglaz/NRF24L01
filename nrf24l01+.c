@@ -3,19 +3,19 @@
  *   redistributing this file, you may do so under either license.
  *
  *   MIT License
- *   
+ *
  *   Copyright (c) 2019 Pavel Nadein
- *   
+ *
  *   Permission is hereby granted, free of charge, to any person obtaining a copy
  *   of this software and associated documentation files (the "Software"), to deal
  *   in the Software without restriction, including without limitation the rights
  *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *   copies of the Software, and to permit persons to whom the Software is
  *   furnished to do so, subject to the following conditions:
- *   
+ *
  *   The above copyright notice and this permission notice shall be included in all
  *   copies or substantial portions of the Software.
- *   
+ *
  *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -145,13 +145,13 @@ static bool send(uint8_t *dest, uint8_t *data, uint8_t size)
 
 	if (dest) /* Change distanation if needed */
 		write_address(TX_ADDR_REG, dest);
-	
-	local_driver->interface.radio_en(true);
-	
+
 	local_driver->mode(RADIO_TX, true);
 
 	local_driver->interface.write(SEND_PAYLOAD_CMD, data, size);
-	
+
+	local_driver->interface.radio_en(true);
+
 	while (!read_irq(tx_irq) && *local_driver->timeout_ms);
 
 	if (local_driver->auto_retransmit.count)
@@ -163,7 +163,7 @@ static bool send(uint8_t *dest, uint8_t *data, uint8_t size)
 
 	clear_irq(tx_irq);
 	flush_buffer(FLUSH_TX_CMD);
-	
+
 	/* Switch back to RX */
 	if (in_rx)
 		local_driver->mode(RADIO_RX, true);
@@ -176,7 +176,7 @@ static bool send(uint8_t *dest, uint8_t *data, uint8_t size)
 static uint8_t recv(uint8_t *data, uint8_t *pipe_num)
 {
 	uint8_t num;
-	
+
 	if (local_driver->config.mode == RADIO_TX) {
 		local_driver->mode(RADIO_RX, true);
 		local_driver->interface.radio_en(true);
@@ -257,7 +257,7 @@ uint8_t nrf24l01_init(struct nrf24l01_conf *driver)
 	local_driver->mode = switch_mode;
 	local_driver->sleep = sleep;
 	local_driver->wakeup = wakeup;
-	
+
 	/* Timeout variable access */
 	local_driver->timeout_ms = &timeout_counter;
 
