@@ -189,6 +189,8 @@ static uint8_t recv(uint8_t *data, uint8_t *pipe_num)
 	num = read_reg(STATUS_REG);
 	num &= PIPE_BITMASK;
 	num >>= 1;
+	if (num > 5)
+		return num;
 
 	if (pipe_num)
 		*pipe_num = num;
