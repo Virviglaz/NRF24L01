@@ -288,6 +288,10 @@ uint8_t nrf24l01_init(struct nrf24l01_conf *driver)
 	write_reg(RX_PW_P4_REG, MIN(local_driver->rx_pipe_size[4], MAX_PIPE_SIZE));
 	write_reg(RX_PW_P5_REG, MIN(local_driver->rx_pipe_size[5], MAX_PIPE_SIZE));
 
+	/* If radio was already initialized, some data can be left if FIFO */
+	flush_buffer(FLUSH_RX_CMD);
+	clear_irq(RX_DR_IRQ_MASK | TX_DS_IRQ_MASK | MAX_RT_IRQ_MASK);
+
 	switch_mode(local_driver->config.mode, local_driver->config.power_enable);
 
 	return local_driver->interface.error;
