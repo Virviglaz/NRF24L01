@@ -69,21 +69,20 @@ enum tx_power { /* LNA gain =1 */
 };
 enum data_rate { R_1MPS, R_2MPS };
 
-struct nrf24l01_conf
-{
+struct nrf24l01_conf {
 	/* Interface functions */
-	struct
-	{
+	const struct {
 		uint8_t(*write)(uint8_t reg, uint8_t *buf, uint8_t size);
 		uint8_t(*read)(uint8_t reg, uint8_t *buf, uint8_t size);
 		void(*radio_en)(bool state);
 		bool(*read_irq)(void); /* Optional */
-		uint8_t error;
 	} interface;
 
+	/* Interface error */
+	uint8_t error;
+
 	/* Configuration Register */
-	struct
-	{
+	struct {
 		enum radio_mode mode : 1;
 		bool power_enable : 1;
 		enum crc_size crc_config : 1;
@@ -96,8 +95,7 @@ struct nrf24l01_conf
 	} config;
 
 	/* Enhanced ShockBurst™ Auto Acknowledgment */
-	struct
-	{
+	struct {
 		bool pipe0 : 1;
 		bool pipe1 : 1;
 		bool pipe2 : 1;
@@ -107,8 +105,7 @@ struct nrf24l01_conf
 	} auto_acknowledgment;
 
 	/* Enabled RX Addresses */
-	struct
-	{
+	struct {
 		bool pipe0 : 1;
 		bool pipe1 : 1;
 		bool pipe2 : 1;
@@ -118,14 +115,12 @@ struct nrf24l01_conf
 	} enabled_rx_addresses;
 
 	/* Setup of Address Widths */
-	struct
-	{
+	struct {
 		enum address_size address_len : 2;
 	} address_widths;
 
 	/* Setup of Automatic Retransmission */
-	struct
-	{
+	struct {
 		uint8_t count : 4;
 		uint8_t delay : 4;
 	} auto_retransmit;
@@ -133,23 +128,22 @@ struct nrf24l01_conf
 	uint8_t channel;
 
 	/* RF Setup Register */
-	struct
-	{
+	struct {
 		enum tx_power power : 3;
 		enum data_rate data_rate : 1;
 	} setup;
 
 	/* Set to NULL if not used */
-	uint8_t *rx_address_p0;
-	uint8_t *rx_address_p1;
-	uint8_t rx_address_p2;
-	uint8_t rx_address_p3;
-	uint8_t rx_address_p4;
-	uint8_t rx_address_p5;
-	uint8_t *tx_address;
+	const uint8_t *rx_address_p0;
+	const uint8_t *rx_address_p1;
+	const uint8_t rx_address_p2;
+	const uint8_t rx_address_p3;
+	const uint8_t rx_address_p4;
+	const uint8_t rx_address_p5;
+	const uint8_t *tx_address;
 
 	/* Size of buffer for each rx pipe */
-	uint8_t rx_pipe_size[6];
+	const uint8_t rx_pipe_size[6];
 
 	/* Decrement this variable outside by timer to limit execution time */
 	volatile uint8_t *timeout_ms;
@@ -158,7 +152,6 @@ struct nrf24l01_conf
 	bool rx_state;
 
 #ifndef __cplusplus
-
 
 	/* Public functions */
 	bool(*send) (uint8_t *dest, uint8_t *data, uint8_t size);

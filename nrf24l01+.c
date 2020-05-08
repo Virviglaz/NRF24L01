@@ -88,7 +88,7 @@ static uint8_t timeout_counter;
 
 static void write_reg(uint8_t reg, uint8_t value)
 {
-	local_driver->interface.error =
+	local_driver->error =
 		local_driver->interface.write((0x1F & reg) | (1 << 5),
 			&value, sizeof(value));
 }
@@ -96,7 +96,7 @@ static void write_reg(uint8_t reg, uint8_t value)
 static uint8_t read_reg(uint8_t reg)
 {
 	uint8_t res;
-	local_driver->interface.error =
+	local_driver->error =
 		local_driver->interface.read(0x1F & reg, &res, sizeof(res));
 
 	return res;
@@ -274,9 +274,9 @@ uint8_t nrf24l01_init(struct nrf24l01_conf *driver)
 	write_reg(SETUP_RETR_REG, *(uint8_t *)&local_driver->auto_retransmit);
 	write_reg(RF_CH_REG, local_driver->channel & 0x7F);
 	write_reg(RF_SETUP_REG, *(uint8_t *)&local_driver->setup);
-	write_address(RX_ADDR_P0_REG, local_driver->rx_address_p0);
-	write_address(RX_ADDR_P1_REG, local_driver->rx_address_p1);
-	write_address(TX_ADDR_REG, local_driver->tx_address);
+	write_address(RX_ADDR_P0_REG, (uint8_t *)local_driver->rx_address_p0);
+	write_address(RX_ADDR_P1_REG, (uint8_t *)local_driver->rx_address_p1);
+	write_address(TX_ADDR_REG, (uint8_t *)local_driver->tx_address);
 	write_reg(RX_ADDR_P2_REG, local_driver->rx_address_p2);
 	write_reg(RX_ADDR_P3_REG, local_driver->rx_address_p3);
 	write_reg(RX_ADDR_P4_REG, local_driver->rx_address_p4);
@@ -294,5 +294,5 @@ uint8_t nrf24l01_init(struct nrf24l01_conf *driver)
 
 	switch_mode(local_driver->config.mode, local_driver->config.power_enable);
 
-	return local_driver->interface.error;
+	return local_driver->error;
 }
